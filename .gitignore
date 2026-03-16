@@ -3,8 +3,13 @@
 /incoming/
 /outputs/
 
+# Local app
+/app/node_modules/
+/app/.env
+
 # Local temp files
 *.tmp
 *.bak
 Thumbs.db
 .DS_Store
+/app/server.log

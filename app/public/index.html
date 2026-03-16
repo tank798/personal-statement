@@ -1,0 +1,155 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Statement Margin Studio</title>
+    <meta
+      name="description"
+      content="Full-stack personal statement editor with local template retrieval, Word-style redlines, and margin comments."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,600;6..96,700&family=Spectral:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-left" aria-hidden="true"></div>
+    <div class="ambient ambient-right" aria-hidden="true"></div>
+    <div class="paper-noise" aria-hidden="true"></div>
+
+    <main class="studio-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">STATEMENT MARGIN STUDIO</p>
+          <h1>像真正有人帮你修过一样，给个人陈述做红线批注。</h1>
+          <p class="lead">
+            上传一篇待修改的 PDF 或 DOCX，系统会结合你本地的模板库和修改原则，生成左侧 redline 文稿与右侧批注卡片。
+          </p>
+        </div>
+        <aside class="status-card">
+          <span class="status-card-label">System status</span>
+          <div class="status-grid">
+            <div>
+              <span class="status-name">Review engine</span>
+              <strong id="engine-status">Checking...</strong>
+            </div>
+            <div>
+              <span class="status-name">Templates</span>
+              <strong id="template-status">Checking...</strong>
+            </div>
+            <div>
+              <span class="status-name">Model</span>
+              <strong id="model-status">Checking...</strong>
+            </div>
+          </div>
+          <p id="status-note" class="status-note">初始化中。</p>
+        </aside>
+      </header>
+
+      <section class="workspace-card upload-card" id="upload-view">
+        <div class="workspace-header">
+          <div>
+            <p class="eyebrow">STEP 1</p>
+            <h2>上传待修改稿</h2>
+          </div>
+          <div class="badge-row">
+            <span class="capsule">PDF / DOCX</span>
+            <span class="capsule capsule-muted">DOC may fail</span>
+          </div>
+        </div>
+
+        <form id="review-form" class="upload-layout">
+          <label for="draft-input" class="dropzone" id="dropzone">
+            <input id="draft-input" name="draft" type="file" accept=".pdf,.doc,.docx,.txt,.md" />
+            <span class="dropzone-mark">+</span>
+            <strong>拖进来，或者点这里选文件</strong>
+            <span>正式版 API 会解析文档正文，再做分段修改和边栏批注。</span>
+          </label>
+
+          <div class="upload-sidebar">
+            <div class="side-note">
+              <span class="side-note-label">Template source</span>
+              <p>你已经改好的个人陈述继续放在本地 `templates/`，不会自动推到公开站点。</p>
+            </div>
+            <div class="selection-card" id="selection-card" hidden>
+              <span class="selection-label">当前文件</span>
+              <strong id="selected-file-name"></strong>
+            </div>
+            <button class="primary-button" id="submit-button" type="submit" disabled>开始审阅</button>
+            <p class="helper-text" id="submit-help">没有 OpenAI key 时会自动切到 mock 模式，方便先走通界面。</p>
+          </div>
+        </form>
+      </section>
+
+      <section class="review-shell" id="review-view" hidden>
+        <div class="review-topbar">
+          <div>
+            <p class="eyebrow">REVIEW OUTPUT</p>
+            <h2 id="review-file-title">statement.docx</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="ghost-button" id="new-review-button" type="button">重新上传</button>
+            <button class="ghost-button" id="download-button" type="button">下载 clean rewrite</button>
+          </div>
+        </div>
+
+        <div class="meta-strip">
+          <div class="meta-item">
+            <span class="meta-label">Mode</span>
+            <strong id="mode-pill">mock</strong>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Templates used</span>
+            <div class="tag-row" id="template-tags"></div>
+          </div>
+          <div class="meta-item meta-notes">
+            <span class="meta-label">Run notes</span>
+            <ul id="run-notes"></ul>
+          </div>
+        </div>
+
+        <div class="review-grid">
+          <section class="manuscript-panel">
+            <div class="panel-head">
+              <span>Redline manuscript</span>
+              <span class="panel-hint">插入为红字，删除为删除线</span>
+            </div>
+            <article class="manuscript" id="manuscript"></article>
+          </section>
+
+          <aside class="comments-panel">
+            <div class="panel-head panel-head-comments">
+              <span>Margin comments</span>
+              <strong id="comment-total">0</strong>
+            </div>
+            <div class="comments-list" id="comments-list"></div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <template id="manuscript-section-template">
+      <section class="manuscript-section">
+        <div class="section-head">
+          <span class="section-label"></span>
+          <span class="section-id"></span>
+        </div>
+        <div class="section-redline"></div>
+      </section>
+    </template>
+
+    <template id="comment-card-template">
+      <button type="button" class="comment-card">
+        <span class="comment-chip"></span>
+        <strong class="comment-title"></strong>
+        <p class="comment-body"></p>
+      </button>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,16 +1,32 @@
-# Statement Margin
+﻿# Statement Margin
 
-Static prototype for a personal statement review assistant.
+This repo now has two layers:
 
-## What is included
+- `docs/`: public GitHub Pages prototype
+- `app/`: full-stack local MVP for real file parsing and AI review
 
-- `docs/`: GitHub Pages-friendly prototype
-- `skills/personal-statement-editor/`: local editing skill for template-based statement review
-- `references/`: house-style rules and template index
+## Public prototype
 
-## Local private materials
+The GitHub Pages site publishes the static prototype in `docs/`.
 
-Keep approved sample statements and incoming drafts outside the public site:
+## Full-stack local app
+
+The local app reads drafts, loads private templates from `templates/`, applies the house rules in `references/`, and returns a review UI with redlines plus margin comments.
+
+### Run locally
+
+1. Open a terminal in `app/`
+2. Install dependencies with `npm install`
+3. Copy `.env.example` to `.env`
+4. Add `OPENAI_API_KEY` if you want real model output
+5. Run `npm run dev`
+6. Open `http://localhost:3000`
+
+Without `OPENAI_API_KEY`, the app falls back to a local mock review mode so you can still test the workflow.
+
+### Private materials
+
+Keep approved sample statements and incoming drafts out of the public site:
 
 - `templates/`
 - `incoming/`
@@ -18,13 +34,6 @@ Keep approved sample statements and incoming drafts outside the public site:
 
 These folders are already ignored by Git.
 
-## Publish on GitHub Pages
+## Notes on model choice
 
-1. Push this repository to GitHub.
-2. In repository settings, open `Pages`.
-3. Set `Source` to `GitHub Actions`.
-4. Push to `main` to deploy the site in `docs/`.
-
-## Important
-
-Do not put real applicant statements into `docs/` or any other public web folder. GitHub Pages sites are public.
+The app defaults to `gpt-5-mini` for lower latency and cost, but you can override `OPENAI_MODEL` in `app/.env`. OpenAI's current model guidance says to start with `gpt-5.4` if you're not sure and use `gpt-5-mini` when you want lower latency and cost.
