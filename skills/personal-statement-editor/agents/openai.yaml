@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personal Statement Editor"
+  short_description: "Template-based statement editor"
+  default_prompt: "Use $personal-statement-editor to review this draft against my saved statement templates and rewrite it with better wording and logic."

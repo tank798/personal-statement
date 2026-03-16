@@ -1,0 +1,10 @@
+# Private review materials
+/templates/
+/incoming/
+/outputs/
+
+# Local temp files
+*.tmp
+*.bak
+Thumbs.db
+.DS_Store
