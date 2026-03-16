@@ -2,6 +2,7 @@
 /templates/
 /incoming/
 /outputs/
+/.env
 
 # Local app
 /app/node_modules/

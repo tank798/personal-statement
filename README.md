@@ -18,9 +18,11 @@ The local app reads drafts, loads private templates from `templates/`, applies t
 1. Open a terminal in `app/`
 2. Install dependencies with `npm install`
 3. Copy `.env.example` to `.env`
-4. Add `OPENAI_API_KEY` if you want real model output
-5. Run `npm run dev`
-6. Open `http://localhost:3000`
+4. Add `OPENAI_API_KEY`
+5. Set `OPENAI_MODEL` if you want to override the default
+6. Optionally set `OPENAI_BASE_URL` if you want to use an OpenAI-compatible non-OpenAI endpoint
+7. Run `npm run dev`
+8. Open `http://localhost:3000`
 
 Without `OPENAI_API_KEY`, the app falls back to a local mock review mode so you can still test the workflow.
 

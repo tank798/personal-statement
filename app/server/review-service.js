@@ -8,7 +8,10 @@ import {
 } from "./templates.js";
 
 const openaiClient = process.env.OPENAI_API_KEY
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  ? new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      ...(process.env.OPENAI_BASE_URL ? { baseURL: process.env.OPENAI_BASE_URL } : {}),
+    })
   : null;
 
 const responseSchema = {
