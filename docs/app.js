@@ -1,4 +1,4 @@
-﻿const uploadView = document.getElementById("upload-view");
+const uploadView = document.getElementById("upload-view");
 const reviewView = document.getElementById("review-view");
 const reviewForm = document.getElementById("review-form");
 const fileInput = document.getElementById("file-input");
@@ -44,6 +44,7 @@ function setView(view) {
   document.body.dataset.view = view;
   uploadView.hidden = view !== "upload";
   reviewView.hidden = view !== "review";
+  window.scrollTo(0, 0);
 }
 
 function activateComment(paragraphId) {
@@ -97,7 +98,7 @@ function queueAutoAdvance() {
     if (selected && document.body.dataset.view === "upload") {
       showReview();
     }
-  }, 180);
+  }, 90);
 }
 
 function setSelectedFile(file) {

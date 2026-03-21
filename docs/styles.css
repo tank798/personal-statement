@@ -1,24 +1,16 @@
-﻿:root {
-  --upload-bg: #060817;
-  --upload-bg-deep: #090d26;
-  --upload-ink: #eef2ff;
-  --upload-ink-soft: rgba(222, 230, 255, 0.78);
-  --upload-line: rgba(153, 174, 255, 0.62);
-  --upload-line-soft: rgba(111, 129, 255, 0.24);
-  --upload-card: rgba(12, 18, 48, 0.58);
-  --upload-blue: #5c7cff;
-  --upload-violet: #8c5bff;
-  --upload-cyan: #4dd9ff;
-  --review-bg-top: #f4eee4;
-  --review-bg-bottom: #ebe3d8;
-  --review-highlight: rgba(255, 253, 249, 0.9);
-  --review-mid: rgba(241, 233, 222, 0.92);
-  --review-ink: #403731;
-  --review-ink-soft: rgba(64, 55, 49, 0.68);
-  --review-redline: #b24f38;
-  --review-panel: rgba(251, 246, 239, 0.76);
-  --review-panel-strong: rgba(255, 252, 247, 0.9);
-  --review-line: rgba(101, 89, 80, 0.12);
+:root {
+  --page-bg: #f5f9ff;
+  --page-bg-deep: #edf3ff;
+  --page-panel: rgba(255, 255, 255, 0.82);
+  --page-panel-strong: rgba(255, 255, 255, 0.94);
+  --page-line: rgba(143, 168, 232, 0.34);
+  --page-line-strong: rgba(123, 151, 227, 0.56);
+  --page-ink: #24314d;
+  --page-ink-soft: rgba(36, 49, 77, 0.64);
+  --page-accent: #6b84ff;
+  --page-accent-soft: rgba(107, 132, 255, 0.16);
+  --page-accent-bright: #8fd9ff;
+  --page-redline: #d04a57;
 }
 
 * {
@@ -36,25 +28,14 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Manrope", "Helvetica Neue", Arial, sans-serif;
-  transition: background 240ms ease, color 240ms ease;
-}
-
-body[data-view="upload"] {
-  color: var(--upload-ink);
+  color: var(--page-ink);
+  font-family: "Manrope", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
   background:
-    radial-gradient(circle at 20% 18%, rgba(77, 217, 255, 0.12), transparent 24%),
-    radial-gradient(circle at 78% 24%, rgba(140, 91, 255, 0.16), transparent 28%),
-    radial-gradient(circle at 52% 72%, rgba(92, 124, 255, 0.14), transparent 34%),
-    linear-gradient(180deg, var(--upload-bg) 0%, var(--upload-bg-deep) 100%);
-}
-
-body[data-view="review"] {
-  color: var(--review-ink);
-  background:
-    radial-gradient(circle at 50% 44%, var(--review-highlight) 0%, var(--review-mid) 20%, rgba(235, 227, 216, 0.75) 35%, transparent 56%),
-    radial-gradient(circle at 50% 47%, transparent 0%, rgba(216, 204, 190, 0.34) 58%, rgba(207, 194, 178, 0.48) 78%, transparent 100%),
-    linear-gradient(180deg, var(--review-bg-top) 0%, var(--review-bg-bottom) 100%);
+    radial-gradient(circle at 18% 18%, rgba(157, 203, 255, 0.34), transparent 22%),
+    radial-gradient(circle at 82% 16%, rgba(137, 164, 255, 0.26), transparent 24%),
+    radial-gradient(circle at 50% 84%, rgba(196, 225, 255, 0.42), transparent 34%),
+    linear-gradient(180deg, var(--page-bg) 0%, var(--page-bg-deep) 100%);
+  transition: background 220ms ease, color 220ms ease;
 }
 
 button,
@@ -66,91 +47,69 @@ button {
   border: 0;
 }
 
-.surface-grain,
-.ambient {
+.surface-grid,
+.surface-glow {
   position: fixed;
   inset: 0;
   pointer-events: none;
 }
 
-body[data-view="upload"] .surface-grain {
-  opacity: 0.18;
+.surface-grid {
+  opacity: 0.58;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(92, 124, 255, 0.08) 1px, transparent 1px);
-  background-size: 100% 100%, 22px 22px;
-  mix-blend-mode: screen;
+    linear-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(207, 220, 252, 0.34) 1px, transparent 1px);
+  background-size: 100% 100%, 28px 28px;
+  mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.86), transparent 88%);
 }
 
-body[data-view="review"] .surface-grain {
-  opacity: 0.1;
-  background-image:
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.5) 0.4px, transparent 0.8px),
-    radial-gradient(circle at 70% 65%, rgba(52, 43, 36, 0.08) 0.5px, transparent 1px);
-  background-size: 18px 18px, 24px 24px;
-  mix-blend-mode: soft-light;
+.surface-glow {
+  opacity: 0.85;
 }
 
-.ambient {
-  opacity: 0;
-  transition: opacity 240ms ease;
+.surface-glow-left {
+  background: radial-gradient(circle at 16% 20%, rgba(143, 217, 255, 0.34), transparent 24%);
 }
 
-body[data-view="upload"] .ambient {
-  opacity: 1;
-}
-
-.ambient-blue {
-  background: radial-gradient(circle at 25% 30%, rgba(77, 217, 255, 0.28), transparent 22%);
-}
-
-.ambient-violet {
-  background: radial-gradient(circle at 76% 34%, rgba(140, 91, 255, 0.34), transparent 24%);
+.surface-glow-right {
+  background: radial-gradient(circle at 84% 18%, rgba(129, 151, 255, 0.24), transparent 22%);
 }
 
 .app-shell {
   position: relative;
   min-height: 100vh;
-  padding: clamp(18px, 3vw, 40px);
+  padding: clamp(18px, 2.6vw, 36px);
 }
 
 .upload-view {
-  min-height: calc(100vh - 2 * clamp(18px, 3vw, 40px));
+  min-height: calc(100vh - 2 * clamp(18px, 2.6vw, 36px));
   display: grid;
   place-items: center;
 }
 
 .upload-stage {
-  width: min(760px, 100%);
+  width: min(1760px, 100%);
   display: grid;
   justify-items: center;
-  row-gap: 32px;
-}
-
-.upload-title {
-  margin: 0;
-  color: var(--upload-ink);
-  font-size: clamp(12px, 1vw, 14px);
-  font-weight: 500;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  text-align: center;
+  gap: 28px;
 }
 
 .dropzone {
   position: relative;
   display: grid;
   place-items: center;
-  width: min(74vw, 620px);
-  aspect-ratio: 16 / 10;
+  width: min(96vw, 1800px);
+  min-height: clamp(560px, 76vh, 900px);
   cursor: pointer;
-  transition: transform 220ms ease, filter 220ms ease;
+  isolation: isolate;
+  transition: transform 200ms ease, filter 200ms ease;
 }
 
 .dropzone:hover,
-.dropzone.dragover {
+.dropzone.dragover,
+.dropzone.has-file {
   transform: translateY(-2px);
-  filter: saturate(1.08);
+  filter: saturate(1.04);
 }
 
 .dropzone input {
@@ -162,35 +121,50 @@ body[data-view="upload"] .ambient {
 }
 
 .dropzone-frame,
-.dropzone-glow {
+.dropzone-halo {
   position: absolute;
   inset: 0;
-  border-radius: 36px;
+  border-radius: 34px;
 }
 
 .dropzone-frame {
-  border: 1.5px dashed var(--upload-line);
-  box-shadow:
-    inset 0 0 0 1px rgba(77, 217, 255, 0.08),
-    0 0 0 1px rgba(140, 91, 255, 0.08);
+  border: 2px dashed rgba(157, 177, 238, 0.62);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(247, 251, 255, 0.48));
 }
 
-.dropzone-glow {
+.dropzone-halo {
   inset: 14px;
-  border: 1px solid rgba(92, 124, 255, 0.16);
-  background: linear-gradient(180deg, rgba(18, 28, 78, 0.5), rgba(10, 15, 38, 0.18));
+  border: 1px solid rgba(121, 152, 243, 0.12);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.28), transparent 54%);
+}
+
+.dropzone-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding: 32px;
+  text-align: center;
+}
+
+.plus-orb {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  border-radius: 999px;
+  border: 1px solid rgba(131, 157, 255, 0.22);
+  background: linear-gradient(180deg, rgba(237, 242, 255, 0.96), rgba(227, 236, 255, 0.88));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 60px rgba(92, 124, 255, 0.14),
-    0 0 120px rgba(140, 91, 255, 0.1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 18px 34px rgba(149, 170, 232, 0.16);
 }
 
 .plus-glyph {
   position: relative;
-  width: 118px;
-  height: 118px;
-  z-index: 2;
-  transition: transform 220ms ease, filter 220ms ease;
+  width: 30px;
+  height: 30px;
 }
 
 .plus-glyph::before,
@@ -200,73 +174,111 @@ body[data-view="upload"] .ambient {
   top: 50%;
   left: 50%;
   border-radius: 999px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(192, 208, 255, 0.78) 16%, rgba(133, 154, 255, 0.96) 48%, rgba(137, 102, 255, 0.96) 100%);
-  box-shadow:
-    0 0 20px rgba(92, 124, 255, 0.48),
-    0 0 38px rgba(140, 91, 255, 0.36),
-    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  background: linear-gradient(180deg, #7b95ff 0%, #6685ff 100%);
+  transform: translate(-50%, -50%);
 }
 
 .plus-glyph::before {
-  width: 16px;
-  height: 118px;
-  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 30px;
 }
 
 .plus-glyph::after {
-  width: 118px;
-  height: 16px;
-  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 4px;
 }
 
-.dropzone.has-file .dropzone-frame,
+.upload-headline {
+  color: var(--page-ink);
+  font-family: "Noto Sans SC", "Manrope", sans-serif;
+  font-size: clamp(30px, 2.8vw, 44px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.upload-subtitle {
+  color: var(--page-ink-soft);
+  font-size: clamp(13px, 1vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.file-types {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.file-chip {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 64px;
+  border-radius: 16px;
+  border: 1px solid rgba(166, 183, 239, 0.3);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 248, 255, 0.9));
+  color: var(--page-accent);
+  font-size: 26px;
+  font-weight: 700;
+  box-shadow: 0 14px 30px rgba(157, 177, 238, 0.12);
+}
+
+.file-chip-pdf {
+  color: #ff9069;
+}
+
+.file-chip-doc {
+  color: #ffb168;
+}
+
+.file-chip-text {
+  color: #5fcaa0;
+}
+
 .dropzone:hover .dropzone-frame,
-.dropzone.dragover .dropzone-frame {
-  border-color: rgba(177, 197, 255, 0.9);
+.dropzone.dragover .dropzone-frame,
+.dropzone.has-file .dropzone-frame {
+  border-color: var(--page-line-strong);
 }
 
-.dropzone.has-file .plus-glyph,
-.dropzone:hover .plus-glyph,
-.dropzone.dragover .plus-glyph {
-  transform: scale(1.03);
-  filter: brightness(1.08);
+.dropzone:hover .plus-orb,
+.dropzone.dragover .plus-orb,
+.dropzone.has-file .plus-orb {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 20px 34px rgba(135, 164, 255, 0.2),
+    0 0 0 8px rgba(107, 132, 255, 0.05);
 }
 
 .minimal-button {
-  min-width: 92px;
-  min-height: 38px;
-  padding: 0 18px;
+  min-width: 108px;
+  min-height: 42px;
+  padding: 0 22px;
   border-radius: 999px;
-  border: 1px solid rgba(126, 146, 255, 0.42);
-  background: linear-gradient(180deg, rgba(25, 35, 86, 0.84), rgba(14, 20, 54, 0.84));
-  color: var(--upload-ink);
-  letter-spacing: 0.28em;
+  border: 1px solid rgba(130, 156, 238, 0.34);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(241, 246, 255, 0.96));
+  color: var(--page-ink);
   font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.28em;
   text-align: center;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-    0 10px 30px rgba(92, 124, 255, 0.26);
+  box-shadow: 0 16px 34px rgba(143, 168, 232, 0.14);
   cursor: pointer;
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
 }
 
 .minimal-button:disabled {
   cursor: not-allowed;
-  opacity: 0.38;
+  opacity: 0.42;
   box-shadow: none;
 }
 
 .minimal-button:hover:enabled,
 .minimal-button:focus-visible {
   transform: translateY(-1px);
-  border-color: rgba(168, 184, 255, 0.74);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-    0 14px 36px rgba(92, 124, 255, 0.32),
-    0 0 22px rgba(140, 91, 255, 0.2);
+  border-color: rgba(112, 140, 223, 0.46);
+  box-shadow: 0 18px 38px rgba(143, 168, 232, 0.18);
   outline: none;
 }
 
@@ -283,13 +295,13 @@ body[data-view="upload"] .ambient {
 }
 
 .review-view {
-  width: min(1360px, 100%);
+  width: min(1460px, 100%);
   margin: 0 auto;
 }
 
 .review-layout {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(280px, 3fr);
+  grid-template-columns: minmax(0, 7fr) minmax(300px, 3fr);
   gap: 24px;
   align-items: start;
 }
@@ -300,40 +312,43 @@ body[data-view="upload"] .ambient {
 }
 
 .document-card {
-  min-height: calc(100vh - 2 * clamp(18px, 3vw, 40px));
-  padding: 34px 36px;
-  border-radius: 30px;
-  border: 1px solid var(--review-line);
-  background: var(--review-panel);
+  min-height: calc(100vh - 2 * clamp(18px, 2.6vw, 36px));
+  padding: 30px;
+  border-radius: 32px;
+  border: 1px solid rgba(141, 167, 230, 0.24);
+  background: var(--page-panel);
+  box-shadow: 0 28px 56px rgba(166, 186, 238, 0.18);
+  backdrop-filter: blur(18px);
 }
 
 .manuscript {
   display: grid;
-  gap: 30px;
+  gap: 24px;
 }
 
 .manuscript-section {
   padding: 28px 30px;
-  border-radius: 22px;
-  border: 1px solid rgba(101, 89, 80, 0.08);
-  background: rgba(255, 252, 247, 0.7);
-  transition: border-color 180ms ease, background 180ms ease;
+  border-radius: 24px;
+  border: 1px solid rgba(148, 173, 233, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
 }
 
 .manuscript-section.active {
-  border-color: rgba(101, 89, 80, 0.18);
-  background: var(--review-panel-strong);
+  border-color: rgba(116, 144, 228, 0.42);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 34px rgba(176, 196, 245, 0.18);
 }
 
 .section-redline {
-  color: var(--review-ink);
+  color: var(--page-ink);
   white-space: pre-wrap;
   font-size: 20px;
   line-height: 1.95;
 }
 
 .redline-insert {
-  color: var(--review-redline);
+  color: var(--page-redline);
 }
 
 .comments-column {
@@ -343,10 +358,10 @@ body[data-view="upload"] .ambient {
 
 .comments-title {
   margin: 0;
-  color: var(--review-ink);
+  color: var(--page-ink);
   font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-align: left;
 }
 
@@ -358,36 +373,49 @@ body[data-view="upload"] .ambient {
 .comment-card {
   width: 100%;
   padding: 22px 24px;
-  border-radius: 22px;
-  border: 1px solid var(--review-line);
-  background: var(--review-panel-strong);
+  border-radius: 24px;
+  border: 1px solid rgba(143, 168, 232, 0.2);
+  background: var(--page-panel-strong);
   text-align: left;
   cursor: pointer;
-  transition: border-color 180ms ease, background 180ms ease;
+  box-shadow: 0 18px 34px rgba(173, 191, 241, 0.14);
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.comment-card:hover,
+.comment-card:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(122, 149, 230, 0.34);
+  outline: none;
 }
 
 .comment-card.active {
-  border-color: rgba(101, 89, 80, 0.22);
-  background: rgba(255, 252, 247, 0.98);
+  border-color: rgba(112, 140, 223, 0.46);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 20px 40px rgba(173, 191, 241, 0.2);
 }
 
 .comment-title {
   display: block;
   margin-bottom: 10px;
-  color: var(--review-ink);
+  color: var(--page-ink);
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.35;
 }
 
 .comment-body {
   margin: 0;
-  color: var(--review-ink-soft);
+  color: var(--page-ink-soft);
   font-size: 16px;
   line-height: 1.8;
 }
 
 @media (max-width: 1080px) {
+  .dropzone {
+    min-height: clamp(480px, 64vh, 680px);
+  }
+
   .review-layout {
     grid-template-columns: 1fr;
   }
@@ -407,31 +435,44 @@ body[data-view="upload"] .ambient {
   }
 
   .dropzone {
-    width: min(88vw, 420px);
-    aspect-ratio: 5 / 4;
+    width: calc(100vw - 32px);
+    min-height: 74vh;
   }
 
-  .dropzone-frame {
-    border-radius: 28px;
-  }
-
-  .dropzone-glow {
+  .dropzone-frame,
+  .dropzone-halo {
     border-radius: 24px;
   }
 
-  .plus-glyph {
-    width: 92px;
-    height: 92px;
+  .dropzone-content {
+    gap: 14px;
+    padding: 24px;
   }
 
-  .plus-glyph::before {
-    width: 14px;
-    height: 92px;
+  .plus-orb {
+    width: 68px;
+    height: 68px;
   }
 
-  .plus-glyph::after {
-    width: 92px;
-    height: 14px;
+  .upload-headline {
+    font-size: 28px;
+  }
+
+  .upload-subtitle {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .file-types {
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .file-chip {
+    width: 48px;
+    height: 56px;
+    font-size: 22px;
   }
 
   .document-card {

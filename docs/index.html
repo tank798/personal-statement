@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -6,31 +6,43 @@
     <title>Statement Margin</title>
     <meta
       name="description"
-      content="Static personal statement review prototype with futuristic upload page and annotation layout."
+      content="Static personal statement review prototype with a minimal blue-white upload page and annotation layout."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body data-view="upload">
-    <div class="surface-grain" aria-hidden="true"></div>
-    <div class="ambient ambient-blue" aria-hidden="true"></div>
-    <div class="ambient ambient-violet" aria-hidden="true"></div>
+    <div class="surface-grid" aria-hidden="true"></div>
+    <div class="surface-glow surface-glow-left" aria-hidden="true"></div>
+    <div class="surface-glow surface-glow-right" aria-hidden="true"></div>
 
     <main class="app-shell">
       <section class="upload-view" id="upload-view">
         <form id="review-form" class="upload-stage" aria-label="上传个人陈述">
-          <h1 class="upload-title">上传个人陈述</h1>
-
           <label for="file-input" class="dropzone" id="dropzone" aria-label="上传个人陈述文件">
             <input id="file-input" type="file" accept=".pdf,.doc,.docx,.txt,.md" />
             <span class="dropzone-frame" aria-hidden="true"></span>
-            <span class="dropzone-glow" aria-hidden="true"></span>
-            <span class="plus-glyph" aria-hidden="true"></span>
+            <span class="dropzone-halo" aria-hidden="true"></span>
+
+            <span class="dropzone-content">
+              <span class="plus-orb" aria-hidden="true">
+                <span class="plus-glyph" aria-hidden="true"></span>
+              </span>
+              <span class="upload-headline">点击或拖拽上传</span>
+              <span class="upload-subtitle">支持 Word、PDF、TXT、Markdown</span>
+
+              <span class="file-types" aria-hidden="true">
+                <span class="file-chip file-chip-word">W</span>
+                <span class="file-chip file-chip-pdf">P</span>
+                <span class="file-chip file-chip-doc">D</span>
+                <span class="file-chip file-chip-text">T</span>
+              </span>
+            </span>
           </label>
 
           <button class="minimal-button" id="confirm-button" type="submit" disabled>批注</button>
