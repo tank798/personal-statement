@@ -1,5 +1,6 @@
 ﻿const uploadView = document.getElementById("upload-view");
 const reviewView = document.getElementById("review-view");
+const reviewForm = document.getElementById("review-form");
 const fileInput = document.getElementById("file-input");
 const dropzone = document.getElementById("dropzone");
 const selectedName = document.getElementById("selected-name");
@@ -10,6 +11,7 @@ const paragraphTemplate = document.getElementById("paragraph-template");
 const commentTemplate = document.getElementById("comment-template");
 
 let selected = null;
+let autoAdvanceTimer = null;
 
 const demoReview = {
   paragraphs: [
@@ -38,11 +40,10 @@ const demoReview = {
   ],
 };
 
-function setSelectedFile(file) {
-  selected = file;
-  selectedName.textContent = file.name;
-  confirmButton.disabled = false;
-  dropzone.classList.add("has-file");
+function setView(view) {
+  document.body.dataset.view = view;
+  uploadView.hidden = view !== "upload";
+  reviewView.hidden = view !== "review";
 }
 
 function activateComment(paragraphId) {
@@ -85,10 +86,32 @@ function renderReview() {
 }
 
 function showReview() {
-  uploadView.hidden = true;
-  reviewView.hidden = false;
+  if (!selected) return;
+  setView("review");
   renderReview();
 }
+
+function queueAutoAdvance() {
+  clearTimeout(autoAdvanceTimer);
+  autoAdvanceTimer = setTimeout(() => {
+    if (selected && document.body.dataset.view === "upload") {
+      showReview();
+    }
+  }, 180);
+}
+
+function setSelectedFile(file) {
+  selected = file;
+  selectedName.textContent = file.name;
+  confirmButton.disabled = false;
+  dropzone.classList.add("has-file");
+  queueAutoAdvance();
+}
+
+reviewForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  showReview();
+});
 
 fileInput.addEventListener("change", (event) => {
   const [file] = event.target.files;
@@ -117,10 +140,4 @@ dropzone.addEventListener("drop", (event) => {
     fileInput.files = event.dataTransfer.files;
     setSelectedFile(file);
   }
-});
-
-confirmButton.addEventListener("click", (event) => {
-  event.preventDefault();
-  if (!selected) return;
-  showReview();
 });
