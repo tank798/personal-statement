@@ -6,100 +6,50 @@
     <title>Statement Margin</title>
     <meta
       name="description"
-      content="Personal statement review assistant prototype with upload, redline preview, and margin comments."
+      content="Static personal statement review prototype with minimalist upload page and annotation layout."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
-    <div class="background-grain" aria-hidden="true"></div>
-    <div class="background-glow background-glow-left" aria-hidden="true"></div>
-    <div class="background-glow background-glow-right" aria-hidden="true"></div>
+  <body data-view="upload">
+    <div class="surface-grain" aria-hidden="true"></div>
 
-    <main class="shell">
-      <header class="hero">
-        <div>
-          <p class="eyebrow">PERSONAL STATEMENT WORKBENCH</p>
-          <h1>Statement Margin</h1>
-          <p class="lead">
-            把个人陈述改成一份像真的有人认真帮你修过的稿子。先上传文档，再进入左文稿 / 右批注的审阅界面。
-          </p>
-        </div>
-        <div class="hero-note">
-          <span class="hero-note-label">Current mode</span>
-          <strong>Static prototype for GitHub Pages</strong>
-          <p>现在先做可演示的前端。真正的 PDF/Word 解析、AI 改写、模板检索后面接后端。</p>
-        </div>
-      </header>
+    <main class="app-shell">
+      <section class="upload-view" id="upload-view">
+        <form id="review-form" class="upload-stage" aria-label="上传个人陈述">
+          <h1 class="upload-title">上传个人陈述</h1>
 
-      <section id="upload-view" class="upload-view">
-        <div class="upload-card">
-          <div class="upload-card-top">
-            <span class="stamp">Step 1</span>
-            <span class="supported-types">PDF / DOC / DOCX</span>
-          </div>
-          <h2>上传待修改稿</h2>
-          <p class="upload-copy">
-            先选一篇待修改的个人陈述。这个页面现在会读取文件名并进入示例批注界面，后面再接真实文档解析和 AI 输出。
-          </p>
-
-          <label for="file-input" class="dropzone" id="dropzone">
-            <input id="file-input" type="file" accept=".pdf,.doc,.docx" />
-            <span class="dropzone-icon">+</span>
-            <strong>拖进来，或者点这里选文件</strong>
-            <span>建议单次只传一个文档，方便做段落级批注。</span>
+          <label for="file-input" class="dropzone" id="dropzone" aria-label="上传个人陈述文件">
+            <input id="file-input" type="file" accept=".pdf,.doc,.docx,.txt,.md" />
+            <svg class="dropzone-ring" viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="46" pathLength="360"></circle>
+            </svg>
+            <span class="plus-glyph" aria-hidden="true"></span>
           </label>
 
-          <div class="selected-file" id="selected-file" hidden>
-            <span class="selected-label">已选择</span>
-            <strong id="selected-name"></strong>
-          </div>
+          <button class="minimal-button" id="confirm-button" type="submit" disabled>批注</button>
 
-          <div class="upload-actions">
-            <button id="confirm-button" class="primary-button" disabled>确认并进入审阅</button>
-            <p class="helper-text">上线时，这里会顺手把文件发给后端做解析和 redline 结构化。</p>
+          <div class="sr-only" aria-live="polite">
+            <span id="selected-name"></span>
           </div>
-        </div>
+        </form>
       </section>
 
-      <section id="review-view" class="review-view" hidden>
-        <div class="review-toolbar">
-          <div>
-            <p class="eyebrow">ANNOTATED DRAFT</p>
-            <h2 id="review-title">review.docx</h2>
-          </div>
-          <div class="toolbar-actions">
-            <button id="back-button" class="ghost-button">重新选文件</button>
-            <button id="export-button" class="ghost-button">导出改后文本</button>
-          </div>
-        </div>
-
-        <div class="prototype-banner">
-          <strong>Prototype mode</strong>
-          <span>当前左侧 redline 和右侧批注来自示例数据。接入后端后，这里会替换成真实模型返回的段落级修改建议。</span>
-        </div>
-
-        <div class="review-grid">
-          <section class="paper-panel">
-            <div class="paper-frame">
-              <div class="paper-header">
-                <span>Revised Statement</span>
-                <span class="paper-meta">Changes in red</span>
-              </div>
-              <article class="paper" id="paper"></article>
+      <section class="review-view" id="review-view" hidden>
+        <div class="review-layout">
+          <section class="document-column">
+            <div class="document-card">
+              <article class="manuscript" id="paper"></article>
             </div>
           </section>
 
-          <aside class="comments-panel">
-            <div class="comments-header">
-              <span>Margin comments</span>
-              <strong id="comment-count">0 comments</strong>
-            </div>
+          <aside class="comments-column">
+            <h2 class="comments-title">批注</h2>
             <div class="comments-list" id="comments-list"></div>
           </aside>
         </div>
@@ -107,18 +57,13 @@
     </main>
 
     <template id="paragraph-template">
-      <section class="paper-section">
-        <div class="section-headline-row">
-          <span class="section-headline"></span>
-          <span class="section-index"></span>
-        </div>
-        <p class="paper-paragraph"></p>
+      <section class="manuscript-section">
+        <div class="section-redline"></div>
       </section>
     </template>
 
     <template id="comment-template">
       <button class="comment-card" type="button">
-        <span class="comment-anchor"></span>
         <strong class="comment-title"></strong>
         <p class="comment-body"></p>
       </button>
