@@ -6,7 +6,7 @@
     <title>Statement Margin</title>
     <meta
       name="description"
-      content="Static personal statement review prototype with a minimal blue-white upload page and annotation layout."
+      content="Personal statement reviewer connected to a live API from GitHub Pages."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,8 +24,8 @@
     <main class="app-shell">
       <section class="upload-view" id="upload-view">
         <form id="review-form" class="upload-stage" aria-label="上传个人陈述">
-          <label for="file-input" class="dropzone" id="dropzone" aria-label="上传个人陈述文件">
-            <input id="file-input" type="file" accept=".pdf,.doc,.docx,.txt,.md" />
+          <label for="draft-input" class="dropzone" id="dropzone" aria-label="上传个人陈述文件">
+            <input id="draft-input" name="draft" type="file" accept=".pdf,.doc,.docx,.txt,.md" />
             <span class="dropzone-frame" aria-hidden="true"></span>
             <span class="dropzone-halo" aria-hidden="true"></span>
 
@@ -45,10 +45,14 @@
             </span>
           </label>
 
-          <button class="minimal-button" id="confirm-button" type="submit" disabled>批注</button>
+          <button class="minimal-button" id="submit-button" type="submit" disabled>批注</button>
 
           <div class="sr-only" aria-live="polite">
-            <span id="selected-name"></span>
+            <span id="engine-status">Checking...</span>
+            <span id="template-status">Checking...</span>
+            <span id="model-status">Checking...</span>
+            <span id="selected-file-name"></span>
+            <span id="status-note">初始化中。</span>
           </div>
         </form>
       </section>
@@ -57,7 +61,7 @@
         <div class="review-layout">
           <section class="document-column">
             <div class="document-card">
-              <article class="manuscript" id="paper"></article>
+              <article class="manuscript" id="manuscript"></article>
             </div>
           </section>
 
@@ -69,14 +73,14 @@
       </section>
     </main>
 
-    <template id="paragraph-template">
+    <template id="manuscript-section-template">
       <section class="manuscript-section">
         <div class="section-redline"></div>
       </section>
     </template>
 
-    <template id="comment-template">
-      <button class="comment-card" type="button">
+    <template id="comment-card-template">
+      <button type="button" class="comment-card">
         <strong class="comment-title"></strong>
         <p class="comment-body"></p>
       </button>

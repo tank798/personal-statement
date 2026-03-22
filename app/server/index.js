@@ -1,4 +1,4 @@
-﻿import "dotenv/config";
+import "dotenv/config";
 import express from "express";
 import multer from "multer";
 import path from "node:path";
@@ -10,12 +10,55 @@ import { buildReviewPayload, getTemplateDiagnostics } from "./review-service.js"
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
+const host = process.env.HOST || "127.0.0.1";
 const port = Number(process.env.PORT || 3000);
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: 10 * 1024 * 1024,
   },
+});
+
+const defaultCorsOrigins = [
+  "https://tank798.github.io",
+  "http://127.0.0.1:4173",
+  "http://localhost:4173",
+];
+const configuredCorsOrigins = (process.env.CORS_ALLOW_ORIGINS || "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
+const allowedCorsOrigins = new Set(
+  configuredCorsOrigins.length ? configuredCorsOrigins : defaultCorsOrigins,
+);
+
+function applyCorsHeaders(request, response) {
+  const origin = request.headers.origin;
+  if (!origin || !allowedCorsOrigins.has(origin)) {
+    return false;
+  }
+
+  response.setHeader("Access-Control-Allow-Origin", origin);
+  response.setHeader("Vary", "Origin");
+  response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (request.headers["access-control-request-private-network"] === "true") {
+    response.setHeader("Access-Control-Allow-Private-Network", "true");
+  }
+
+  return true;
+}
+
+app.use((request, response, next) => {
+  applyCorsHeaders(request, response);
+
+  if (request.method === "OPTIONS") {
+    response.status(204).end();
+    return;
+  }
+
+  next();
 });
 
 app.use(express.json());
@@ -68,6 +111,6 @@ app.use((error, _request, response, _next) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Statement Margin app listening on http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Statement Margin app listening on http://${host}:${port}`);
 });

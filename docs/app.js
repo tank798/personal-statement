@@ -1,44 +1,48 @@
+const API_STORAGE_KEY = "statementMarginApiBase";
+
+function normalizeApiBase(value) {
+  if (!value) return "";
+  return value.trim().replace(/\/+$/, "");
+}
+
+function resolveApiBase() {
+  const params = new URLSearchParams(window.location.search);
+  const queryValue = normalizeApiBase(params.get("api"));
+
+  if (queryValue) {
+    window.localStorage.setItem(API_STORAGE_KEY, queryValue);
+    return queryValue;
+  }
+
+  const storedValue = normalizeApiBase(window.localStorage.getItem(API_STORAGE_KEY));
+  if (storedValue) {
+    return storedValue;
+  }
+
+  return window.location.hostname.endsWith("github.io") ? "http://127.0.0.1:3000" : "";
+}
+
+const apiBase = resolveApiBase();
+const healthUrl = `${apiBase}/api/health`;
+const reviewUrl = `${apiBase}/api/review`;
+
 const uploadView = document.getElementById("upload-view");
 const reviewView = document.getElementById("review-view");
 const reviewForm = document.getElementById("review-form");
-const fileInput = document.getElementById("file-input");
+const draftInput = document.getElementById("draft-input");
 const dropzone = document.getElementById("dropzone");
-const selectedName = document.getElementById("selected-name");
-const confirmButton = document.getElementById("confirm-button");
-const paper = document.getElementById("paper");
+const selectedFileName = document.getElementById("selected-file-name");
+const submitButton = document.getElementById("submit-button");
+const engineStatus = document.getElementById("engine-status");
+const templateStatus = document.getElementById("template-status");
+const modelStatus = document.getElementById("model-status");
+const statusNote = document.getElementById("status-note");
+const manuscript = document.getElementById("manuscript");
 const commentsList = document.getElementById("comments-list");
-const paragraphTemplate = document.getElementById("paragraph-template");
-const commentTemplate = document.getElementById("comment-template");
+const manuscriptSectionTemplate = document.getElementById("manuscript-section-template");
+const commentCardTemplate = document.getElementById("comment-card-template");
 
-let selected = null;
-let autoAdvanceTimer = null;
-
-const demoReview = {
-  paragraphs: [
-    {
-      id: "p1",
-      html: "我……对……感兴趣。",
-    },
-    {
-      id: "p2",
-      html: "在我的 RA 工作期间，我<span class=\"redline-insert\">把数据清洗和政策问题联系起来</span>。",
-    },
-  ],
-  comments: [
-    {
-      id: "c1",
-      title: "开头可以更稳一点",
-      body: "信息是够的，但第一句有点直给。我把语气压低一点，显得更像成熟申请文书。",
-      paragraphId: "p1",
-    },
-    {
-      id: "c2",
-      title: "经历段补上因果链",
-      body: "原文写了做了什么，但没说说这些事情怎么支撑申请方向，所以这里把逻辑链补齐了。",
-      paragraphId: "p2",
-    },
-  ],
-};
+let currentFile = null;
 
 function setView(view) {
   document.body.dataset.view = view;
@@ -47,77 +51,145 @@ function setView(view) {
   window.scrollTo(0, 0);
 }
 
-function activateComment(paragraphId) {
-  paper.querySelectorAll(".manuscript-section").forEach((section) => {
-    section.classList.toggle("active", section.dataset.paragraphId === paragraphId);
+function connectionHint() {
+  return apiBase || window.location.origin;
+}
+
+function syncDropzoneState() {
+  dropzone.classList.toggle("has-file", Boolean(currentFile));
+}
+
+function setCurrentFile(file) {
+  currentFile = file;
+  selectedFileName.textContent = file.name;
+  submitButton.disabled = false;
+  syncDropzoneState();
+  clearInlineError();
+}
+
+function setLoadingState(isLoading) {
+  submitButton.disabled = isLoading || !currentFile;
+  submitButton.textContent = isLoading ? "处理中" : "批注";
+  dropzone.classList.toggle("is-loading", isLoading);
+}
+
+function clearInlineError() {
+  document.querySelector(".error-banner")?.remove();
+}
+
+function showInlineError(message) {
+  clearInlineError();
+  const banner = document.createElement("div");
+  banner.className = "error-banner";
+  banner.textContent = message;
+  reviewForm.appendChild(banner);
+}
+
+function activateSection(sectionId) {
+  manuscript.querySelectorAll(".manuscript-section").forEach((node) => {
+    node.classList.toggle("active", node.dataset.sectionId === sectionId);
   });
 
-  commentsList.querySelectorAll(".comment-card").forEach((card) => {
-    card.classList.toggle("active", card.dataset.paragraphId === paragraphId);
+  commentsList.querySelectorAll(".comment-card").forEach((node) => {
+    node.classList.toggle("active", node.dataset.sectionId === sectionId);
+  });
+
+  manuscript.querySelector(`[data-section-id="${sectionId}"]`)?.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
   });
 }
 
-function renderReview() {
-  paper.innerHTML = "";
+function renderReview(payload) {
+  manuscript.innerHTML = "";
   commentsList.innerHTML = "";
 
-  demoReview.paragraphs.forEach((paragraph) => {
-    const fragment = paragraphTemplate.content.cloneNode(true);
-    const section = fragment.querySelector(".manuscript-section");
-    const body = fragment.querySelector(".section-redline");
+  const sections = payload?.review?.sections || [];
+  if (!sections.length) {
+    throw new Error("AI 没有返回可展示的批注结果。");
+  }
 
-    section.dataset.paragraphId = paragraph.id;
-    body.innerHTML = paragraph.html;
-    section.addEventListener("click", () => activateComment(paragraph.id));
-    paper.appendChild(fragment);
+  sections.forEach((section) => {
+    const sectionFragment = manuscriptSectionTemplate.content.cloneNode(true);
+    const sectionNode = sectionFragment.querySelector(".manuscript-section");
+    const redlineNode = sectionFragment.querySelector(".section-redline");
+
+    sectionNode.dataset.sectionId = section.id;
+    redlineNode.innerHTML = section.redlineHtml;
+    sectionNode.addEventListener("click", () => activateSection(section.id));
+    manuscript.appendChild(sectionFragment);
+
+    const commentFragment = commentCardTemplate.content.cloneNode(true);
+    const commentNode = commentFragment.querySelector(".comment-card");
+    commentNode.dataset.sectionId = section.id;
+    commentFragment.querySelector(".comment-title").textContent = section.comment.title;
+    commentFragment.querySelector(".comment-body").textContent = section.comment.body;
+    commentNode.addEventListener("click", () => activateSection(section.id));
+    commentsList.appendChild(commentFragment);
   });
 
-  demoReview.comments.forEach((comment) => {
-    const fragment = commentTemplate.content.cloneNode(true);
-    const card = fragment.querySelector(".comment-card");
-
-    card.dataset.paragraphId = comment.paragraphId;
-    fragment.querySelector(".comment-title").textContent = comment.title;
-    fragment.querySelector(".comment-body").textContent = comment.body;
-    card.addEventListener("click", () => activateComment(comment.paragraphId));
-    commentsList.appendChild(fragment);
-  });
-
-  activateComment("p1");
-}
-
-function showReview() {
-  if (!selected) return;
   setView("review");
-  renderReview();
+  activateSection(sections[0].id);
 }
 
-function queueAutoAdvance() {
-  clearTimeout(autoAdvanceTimer);
-  autoAdvanceTimer = setTimeout(() => {
-    if (selected && document.body.dataset.view === "upload") {
-      showReview();
+async function fetchHealth() {
+  try {
+    const response = await fetch(healthUrl);
+    if (!response.ok) {
+      throw new Error("Health check failed.");
     }
-  }, 90);
+
+    const health = await response.json();
+    engineStatus.textContent = health.openaiConfigured ? "Live API" : "Mock fallback";
+    templateStatus.textContent = `${health.templateCount} style file(s)`;
+    modelStatus.textContent = health.openaiConfigured ? health.configuredModel : "local mock";
+    statusNote.textContent = health.warnings.length ? health.warnings.join(" ") : "ready";
+    clearInlineError();
+  } catch {
+    engineStatus.textContent = "Offline";
+    templateStatus.textContent = "Templates unknown";
+    modelStatus.textContent = "Model unavailable";
+    statusNote.textContent = "backend unavailable";
+    showInlineError(`没有连上 AI 接口。先启动本地服务 ${connectionHint()}，或者用 ?api=https://你的接口域名 指向线上 API。`);
+  }
 }
 
-function setSelectedFile(file) {
-  selected = file;
-  selectedName.textContent = file.name;
-  confirmButton.disabled = false;
-  dropzone.classList.add("has-file");
-  queueAutoAdvance();
-}
-
-reviewForm.addEventListener("submit", (event) => {
+reviewForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  showReview();
+  clearInlineError();
+
+  if (!currentFile) {
+    showInlineError("先选一个文件。");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("draft", currentFile);
+  setLoadingState(true);
+
+  try {
+    const response = await fetch(reviewUrl, {
+      method: "POST",
+      body: formData,
+    });
+
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || "Review failed.");
+    }
+
+    renderReview(payload);
+  } catch (error) {
+    showInlineError(error.message || `生成失败。请检查接口 ${connectionHint()} 是否可用。`);
+  } finally {
+    setLoadingState(false);
+  }
 });
 
-fileInput.addEventListener("change", (event) => {
+draftInput.addEventListener("change", (event) => {
   const [file] = event.target.files;
   if (file) {
-    setSelectedFile(file);
+    setCurrentFile(file);
   }
 });
 
@@ -138,7 +210,10 @@ fileInput.addEventListener("change", (event) => {
 dropzone.addEventListener("drop", (event) => {
   const [file] = event.dataTransfer.files;
   if (file) {
-    fileInput.files = event.dataTransfer.files;
-    setSelectedFile(file);
+    draftInput.files = event.dataTransfer.files;
+    setCurrentFile(file);
   }
 });
+
+fetchHealth();
+syncDropzoneState();
