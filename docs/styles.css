@@ -300,6 +300,82 @@ button {
   box-shadow: 0 12px 24px rgba(180, 198, 238, 0.12);
 }
 
+.loading-panel {
+  width: min(620px, 92vw);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px 18px;
+  align-items: center;
+  padding: 18px 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(128, 154, 230, 0.18);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 20px 38px rgba(177, 194, 240, 0.16);
+  backdrop-filter: blur(12px);
+}
+
+.loading-beacon {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #7ea1ff 0%, #6b84ff 100%);
+  box-shadow:
+    0 0 0 8px rgba(107, 132, 255, 0.08),
+    0 0 28px rgba(143, 217, 255, 0.28);
+  animation: loading-pulse 1.8s ease-in-out infinite;
+}
+
+.loading-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.loading-title {
+  color: var(--page-ink);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.loading-detail {
+  margin: 0;
+  color: var(--page-ink-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.loading-steps {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.loading-step {
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(132, 157, 232, 0.16);
+  background: rgba(255, 255, 255, 0.54);
+  color: rgba(36, 49, 77, 0.46);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.loading-step.is-current {
+  transform: translateY(-1px);
+  border-color: rgba(109, 136, 220, 0.34);
+  background: rgba(237, 242, 255, 0.92);
+  color: var(--page-ink);
+}
+
+.loading-step.is-done {
+  border-color: rgba(122, 149, 230, 0.22);
+  background: rgba(244, 248, 255, 0.84);
+  color: rgba(36, 49, 77, 0.72);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -531,5 +607,17 @@ button {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+@keyframes loading-pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.84;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
   }
 }

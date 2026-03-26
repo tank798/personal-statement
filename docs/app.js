@@ -1,4 +1,18 @@
 const API_STORAGE_KEY = "statementMarginApiBase";
+const loadingStates = [
+  {
+    title: "正在解析文稿",
+    detail: "先把上传内容拆成可处理的段落。",
+  },
+  {
+    title: "正在对照模板",
+    detail: "结合你历史文书里的统一写法做风格对齐。",
+  },
+  {
+    title: "正在生成批注",
+    detail: "整理逐段修改意见和改写结果。",
+  },
+];
 
 function normalizeApiBase(value) {
   if (!value) return "";
@@ -33,6 +47,10 @@ const draftInput = document.getElementById("draft-input");
 const dropzone = document.getElementById("dropzone");
 const selectedFileName = document.getElementById("selected-file-name");
 const submitButton = document.getElementById("submit-button");
+const loadingPanel = document.getElementById("loading-panel");
+const loadingTitle = document.getElementById("loading-title");
+const loadingDetail = document.getElementById("loading-detail");
+const loadingSteps = Array.from(document.querySelectorAll(".loading-step"));
 const engineStatus = document.getElementById("engine-status");
 const templateStatus = document.getElementById("template-status");
 const modelStatus = document.getElementById("model-status");
@@ -43,6 +61,8 @@ const manuscriptSectionTemplate = document.getElementById("manuscript-section-te
 const commentCardTemplate = document.getElementById("comment-card-template");
 
 let currentFile = null;
+let loadingTicker = null;
+let loadingStepIndex = 0;
 
 function setView(view) {
   document.body.dataset.view = view;
@@ -67,10 +87,47 @@ function setCurrentFile(file) {
   clearInlineError();
 }
 
+function renderLoadingStep(index) {
+  const frame = loadingStates[index % loadingStates.length];
+  loadingTitle.textContent = frame.title;
+  loadingDetail.textContent = frame.detail;
+
+  loadingSteps.forEach((step, stepIndex) => {
+    step.classList.toggle("is-current", stepIndex === index);
+    step.classList.toggle("is-done", stepIndex < index);
+  });
+}
+
+function startLoadingFeedback() {
+  loadingStepIndex = 0;
+  renderLoadingStep(loadingStepIndex);
+  loadingPanel.hidden = false;
+  clearInterval(loadingTicker);
+  loadingTicker = window.setInterval(() => {
+    loadingStepIndex = (loadingStepIndex + 1) % loadingStates.length;
+    renderLoadingStep(loadingStepIndex);
+  }, 2400);
+}
+
+function stopLoadingFeedback() {
+  clearInterval(loadingTicker);
+  loadingTicker = null;
+  loadingPanel.hidden = true;
+  loadingSteps.forEach((step) => {
+    step.classList.remove("is-current", "is-done");
+  });
+}
+
 function setLoadingState(isLoading) {
   submitButton.disabled = isLoading || !currentFile;
   submitButton.textContent = isLoading ? "处理中" : "批注";
   dropzone.classList.toggle("is-loading", isLoading);
+
+  if (isLoading) {
+    startLoadingFeedback();
+  } else {
+    stopLoadingFeedback();
+  }
 }
 
 function clearInlineError() {

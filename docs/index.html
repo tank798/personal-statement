@@ -47,6 +47,19 @@
 
           <button class="minimal-button" id="submit-button" type="submit" disabled>批注</button>
 
+          <section class="loading-panel" id="loading-panel" hidden aria-live="polite">
+            <span class="loading-beacon" aria-hidden="true"></span>
+            <div class="loading-copy">
+              <strong class="loading-title" id="loading-title">正在处理文稿</strong>
+              <p class="loading-detail" id="loading-detail">准备上传内容…</p>
+            </div>
+            <div class="loading-steps" id="loading-steps">
+              <span class="loading-step">解析文稿</span>
+              <span class="loading-step">对照模板</span>
+              <span class="loading-step">生成批注</span>
+            </div>
+          </section>
+
           <div class="sr-only" aria-live="polite">
             <span id="engine-status">Checking...</span>
             <span id="template-status">Checking...</span>
